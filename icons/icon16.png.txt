@@ -1,0 +1,12 @@
+Icon placeholder for 16x16
+  
+To complete the extension, replace this file with an actual PNG icon.
+
+Quick options:
+1. Use an online icon generator
+2. Export from any image editor
+3. Use the SVG files created and convert them
+
+The icon should be a 16x16 PNG with:
+- Blue background (#4A90E2)
+- White "H" or shield symbol

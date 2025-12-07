@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Honestra Teleology Guard",
+  "version": "0.1.0",
+  "description": "Bilingual (EN/HE) teleology-aware guard for AI explanations and system messages.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "notifications",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "https://honestra.org/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Honestra Guard"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+
