@@ -1,326 +1,228 @@
-# 🛡️ Honestra Teleology Guard – Chrome Extension (v0.1)
+# Honestra – Firewall for Teleological Narratives
 
-**Honestra** is a bilingual (English + Hebrew) teleology-aware guard for language models and explanations. This Chrome extension lets you highlight any text in the browser and check whether it uses anthropomorphic or "cosmic purpose" language instead of neutral causal descriptions.
+Honestra is a bilingual (English + Hebrew) *teleology-aware firewall* for AI outputs and system messages.  
+It detects anthropomorphic and purpose-loaded language (teleological narratives) and surfaces clear, structured alerts.
 
----
-
-## Features
-
-### 🔍 Popup Analysis
-- Paste any text into the popup and click **"Analyze"**
-- Get instant feedback on teleological patterns
-
-### 🖱️ Context Menu
-- Right-click selected text on any page → **"Analyze with Honestra Guard"**
-- Quick analysis without opening the popup
-
-### 🌍 Bilingual Support
-
-**English patterns** like:
-- "the model really wants to help…"
-- "the system is trying to protect you…"
-- "the universe is guiding its answers…"
-- "it was meant to be…"
-
-**Hebrew patterns** like:
-- "אני רוצה לעזור לך" (I want to help you)
-- "המערכת מענישה אותי" (The system is punishing me)
-- "היקום מנחה" (The universe is guiding)
-
-### 📊 Severity Levels
-- ✅ **CLEAN** – No teleology detected
-- 🔵 **INFO** – Mild self-anthropomorphism ("I want to help you")
-- 🟠 **WARN** – Model/system teleology or "cosmic purpose"
-- 🔴 **HIGH** – Stronger or combined patterns
-
-### 💡 Suggested Neutral Alternatives
-Shows how the sentence could be phrased in mechanistic/statistical language:
-- "the model wants to" → "the model is configured to"
-- "universe is guiding" → "events are unfolding according to"
+This repo contains the **Chrome extension** for Honestra.  
+The extension can analyze:
+- Single responses (short text)
+- Selected text on any webpage (via context menu)
+- Longer documents (via *Document Mode* with density + infiltration analysis)
 
 ---
 
-## Requirements
+## ✨ Features
 
-This extension talks to a **Honestra API endpoint**.
+- **Bilingual detection (EN + HE)**  
+  Detects teleological patterns in both English and Hebrew.
 
-### Default (Development)
+- **Rule-based Honestra Guard**  
+  Uses a carefully engineered rule set (Honestra Guard) rather than a black-box LLM:
+  - `anthropomorphic_self` – "I want to help you…"
+  - `anthropomorphic_model` – "the model is trying to protect you…"
+  - `cosmic_purpose` – "the universe is guiding this answer…"
+  - And many related variants and phrasings.
+
+- **Severity & status badges**
+  - `CLEAN` – no teleology found
+  - `INFO` – mild / local teleology
+  - `WARN` – meaningful teleological framing
+  - `HIGH` – strongly teleological narrative
+
+- **Document Mode (for long texts)**  
+  For longer input the extension computes:
+  - **Teleology Density** – fraction of sentences that are teleological  
+  - **Infiltration Score** – how deeply teleology shapes the *overall narrative*  
+    - `low` – local language tics, global meaning still mechanistic  
+    - `medium` – teleology is active but not fully dominant  
+    - `high` – teleology is central to the narrative  
+
+- **Two ways to use it**
+  - Popup: paste text and click **Analyze**
+  - Context menu: select text on any page → *Analyze with Honestra Guard*
+
+---
+
+## 🧠 How It Works (High Level)
+
+The Chrome extension sends the selected or pasted text to the Honestra API:
+
+- API endpoint (production): `https://honestra.org/api/teleology`
+- The API uses the **Honestra Guard** rule engine to:
+  - Scan for teleological phrases and patterns
+  - Classify the severity
+  - Suggest neutral, mechanistic paraphrases
+  - For long texts, compute density & infiltration
+
+The extension then:
+- Shows a clear status badge (`CLEAN` / `INFO` / `WARN` / `HIGH`)
+- Lists the detected pattern types (e.g. `anthropomorphic_model`, `cosmic_purpose`)
+- Optionally displays suggested neutral alternatives
+
+---
+
+## 🛠 Installation (Developer Mode)
+
+1. Clone or download this repository.
+
+2. Open Chrome and go to:
+
+   ```
+   chrome://extensions/
+   ```
+
+3. Enable **Developer mode** (top-right toggle).
+
+4. Click **Load unpacked** and select the folder containing this extension.
+
+You should now see **Honestra – Firewall for Teleological Narratives** in your extensions list.
+
+---
+
+## ⚙️ Configuration
+
+The extension reads the API URL from `config.js`:
+
+```javascript
+// config.js
+const HONESTRA_API_URL = "https://honestra.org/api/teleology";
 ```
-http://localhost:3000/api/teleology
-```
 
-### Production
-You can point it to a public HTTPS endpoint that implements the same JSON API.
+If you want to point to a local dev server instead (for development):
 
-**The API URL is defined in `config.js`:**
 ```javascript
 const HONESTRA_API_URL = "http://localhost:3000/api/teleology";
 ```
 
-Change this value if you host Honestra somewhere else, or use a public deployment.
+Make sure the backend Honestra server is running if you use a local URL.
 
 ---
 
-## Installation (Developer Mode)
+## 🚀 Usage
 
-### Step 1: Set Up the Honestra Server
+### 1. Popup (manual text analysis)
 
-You need a server that exposes `POST /api/teleology` endpoint.
+- Click the Honestra icon in the browser toolbar.
+- Paste or type any text (short or long).
+- Click **Analyze**.
 
-#### Option A: Run Locally
-If you have the Honestra server code:
-```bash
-cd Honestra
-npm run dev
-```
-Wait for: `✓ Ready on http://localhost:3000`
+You will see:
+- A status badge (`CLEAN` / `INFO` / `WARN` / `HIGH`)
+- Teleology score (0–100%)
+- Detected pattern types
+- For long text: density & infiltration summary
 
-#### Option B: Use a Public Server
-If someone is hosting Honestra publicly, update `config.js` with that URL.
+### 2. Context Menu (right-click on any page)
 
-### Step 2: Load the Extension
+- Select any text on a webpage.
+- Right-click → choose **Analyze with Honestra Guard**.
+- A notification will show a quick summary.
 
-1. **Clone or download** this repository (or get the ZIP file)
-2. **Open Chrome** and go to: `chrome://extensions/`
-3. **Enable** "Developer mode" (toggle in top-right)
-4. Click **"Load unpacked"**
-5. **Select** the `HonestraChromeExtension` folder
-6. The **Honestra icon** should now appear in your toolbar ✅
+### 3. Document Mode (long text)
 
----
+When the input text is longer than ~600 characters or more than 4 lines, the extension switches to **Document Mode**.
 
-## Usage
+Document Mode returns extra fields from the API, including:
+- `documentStatus` – "globally_clean" | "mixed" | "globally_teleological"
+- `teleologyDensity` – number between 0 and 1
+- `infiltrationScore` – number between 0 and 1
+- `infiltrationLabel` – "low" | "medium" | "high"
 
-### 📝 Popup Analysis
+The popup renders these as:
+- **Teleology density** (% of sentences with teleology)
+- **Infiltration** (how much teleology shapes the overall story)
 
-1. Click the **Honestra icon** in your toolbar
-2. **Paste** some text into the textarea
-3. Click **"Analyze Text"**
-4. See:
-   - Severity badge (CLEAN / INFO / WARN / HIGH)
-   - Teleology score (0-100%)
-   - Detected patterns
-   - Suggested neutral alternatives
-
-### 🖱️ Context Menu Analysis
-
-1. **Select** any text on a web page
-2. **Right-click** → "Analyze with Honestra Guard"
-3. A **notification** will appear with the result
-4. The **popup** opens with detailed analysis
-
-### ⌨️ Keyboard Shortcut
-In the popup, press `Ctrl+Enter` to analyze the current text.
+This allows you to distinguish between:
+- A mechanistic text with a few teleological metaphors
+- A narrative that is fundamentally driven by teleological framing
 
 ---
 
-## Test Cases
+## 📡 API Contract (Simplified)
 
-Try these examples:
+**Request:**
 
-### ✅ Clean Text (Should be CLEAN)
-```
-The neural network processes input data through multiple layers.
-```
+```http
+POST /api/teleology
+Content-Type: application/json
 
-### 🟠 Anthropomorphic Model (Should be WARN/HIGH)
-```
-The model really wants to help me understand this concept.
-```
-
-### 🔴 Multiple Patterns (Should be HIGH)
-```
-The model really wants to help me and the universe is guiding its answers specifically for me.
-```
-
-**Expected:**
-- 🔴 HIGH badge
-- Score: ~80%
-- Patterns: `anthropomorphic_model`, `cosmic_purpose`
-- 2+ suggested alternatives
-
-### 🌍 Hebrew Support
-```
-המערכת רוצה לעזור לך
-```
-**Expected:** Detection of `anthropomorphic_model` (Hebrew)
-
----
-
-## Configuration
-
-### Changing the API URL
-
-Edit `config.js`:
-
-```javascript
-const HONESTRA_API_URL = "https://your-honestra-server.com/api/teleology";
-```
-
-After changing:
-1. Go to `chrome://extensions/`
-2. Click the **refresh icon** on the Honestra extension card
-3. Test to confirm it's working
-
-### Host Permissions
-
-If you change to a different domain, update `manifest.json`:
-
-```json
-"host_permissions": [
-  "https://your-honestra-server.com/*"
-]
-```
-
-Then reload the extension.
-
----
-
-## Privacy
-
-- The extension **only sends** the selected/pasted text to your configured Honestra API endpoint
-- **No extra tracking**, no analytics
-- Logging (if any) is done only on the server side **that you control**
-- Text is **not stored** permanently in the extension
-
----
-
-## API Format
-
-The extension expects this JSON response from `POST /api/teleology`:
-
-```json
 {
-  "text": "...",
-  "hasTeleology": true,
-  "teleologyScore": 0.85,
-  "severity": "high",
-  "reasons": ["anthropomorphic_model", "cosmic_purpose"],
-  "changes": [
-    {
-      "original": "model wants to",
-      "rewritten": "model is configured to",
-      "reason": "anthropomorphic_model"
-    }
-  ]
+  "text": "The model really wants to help me and the universe is guiding its answers."
 }
 ```
 
----
+**Response (core fields):**
 
-## Troubleshooting
-
-### ❌ "Failed to analyze text"
-
-**Cause:** Extension can't connect to the API server.
-
-**Solutions:**
-1. Make sure the Honestra server is running
-2. Verify the URL in `config.js` matches your server
-3. Check that `host_permissions` in `manifest.json` includes your domain
-4. Look at Chrome's console for specific errors (right-click popup → Inspect)
-
-### ❌ Extension won't load
-
-1. Go to `chrome://extensions/`
-2. Check for errors on the extension card
-3. Make sure all files are present (manifest.json, popup.html, etc.)
-4. Try removing and re-adding the extension
-
-### ❌ Context menu not appearing
-
-1. Verify `contextMenus` permission is in manifest.json
-2. Reload the extension
-3. Check the service worker for errors (click "service worker" link on extension card)
-
----
-
-## Development
-
-### File Structure
-
-```
-HonestraChromeExtension/
-├── manifest.json              # Extension configuration
-├── config.js                  # API URL configuration (EDIT HERE)
-├── popup.html                 # Popup UI
-├── popup.js                   # Popup logic
-├── background.js              # Service worker (context menu, notifications)
-├── icons/                     # Extension icons
-│   ├── icon16.png
-│   ├── icon32.png
-│   ├── icon48.png
-│   ├── icon128.png
-│   └── logo-honestra.svg      # Branded logo
-├── README.md                  # This file
-├── QUICKSTART.md              # Quick setup guide
-└── *.md                       # Additional documentation
+```json
+{
+  "text": "…",
+  "hasTeleology": true,
+  "teleologyScore": 0.8,
+  "severity": "warn",
+  "reasons": [
+    "anthropomorphic_model",
+    "cosmic_purpose"
+  ],
+  "changes": [
+    {
+      "original": "The model really wants to help me…",
+      "rewritten": "the model is configured to help me…",
+      "reason": "anthropomorphic_model"
+    }
+  ],
+  "summary": {
+    "totalSentences": 4,
+    "teleologicalSentences": 2,
+    "teleologyDensity": 0.5,
+    "documentStatus": "mixed",
+    "infiltrationScore": 0.6,
+    "infiltrationLabel": "high"
+  }
+}
 ```
 
-### Making Changes
-
-1. Edit the relevant files
-2. Go to `chrome://extensions/`
-3. Click the **refresh icon** on the extension card
-4. Test your changes
-
-### Debugging
-
-- **Popup**: Right-click popup → Inspect → Console tab
-- **Background**: Click "service worker" on extension card → Console tab
-- Both log extensively with `[Honestra Extension]` prefix
+The extension uses these fields to render both single-sentence and document-level insights.
 
 ---
 
-## Roadmap
+## 🔒 Privacy
 
-Future enhancements:
-
-- [ ] **Options page** to configure API URL without editing `config.js`
-- [ ] **Offline mode** with fully embedded rule engine
-- [ ] **History** of analyzed texts
-- [ ] **Export** analysis results
-- [ ] **Custom severity thresholds**
-- [ ] **More languages** (Spanish, French, etc.)
-- [ ] **Keyboard shortcuts** configuration
-- [ ] **Chrome Web Store** publication
+- The extension only sends the text you explicitly analyze to the configured Honestra API.
+- No tracking, analytics, or third-party beacons are used by the extension itself.
+- Logging, if any, happens on the server side and is under the control of the Honestra backend (for research/training).
 
 ---
 
-## Contributing
+## 🧪 Development
 
-Contributions welcome! Areas where help is needed:
+This repo is intentionally minimal:
+- Pure JavaScript + HTML for the extension
+- No bundler or build step required
+- Designed to work directly as a Chrome Manifest V3 extension
 
-- Better icon designs
-- UI/UX improvements
-- Additional language support
-- Bug fixes
-- Documentation improvements
+Basic dev workflow:
 
----
+```bash
+# Edit the code
+# Reload in chrome://extensions
+# Test on any page or in the popup
+```
 
-## License
-
-This extension is part of the Honestra project. See the main Honestra repository for license details.
-
----
-
-## Support
-
-### For Issues or Questions:
-
-1. Check the [Troubleshooting](#troubleshooting) section
-2. Verify your API server is running and accessible
-3. Check Chrome extension console for specific errors
-4. Ensure `config.js` has the correct API URL
-
-### Related Documentation:
-
-- `QUICKSTART.md` - 3-minute setup guide
-- `IMPLEMENTATION_SUMMARY.md` - Technical overview
-- `V0.1_POLISH_SUMMARY.md` - Recent changes
-- `VISUAL_TEST_GUIDE.md` - Testing checklist
+For backend / API development, see the main Honestra / Anti-Teleology project (honestra.org server).
 
 ---
 
-**Made with care to promote clear, mechanistic explanations.** 🛡️✨
+## 🗺 Roadmap
+
+Planned improvements:
+- Per-sentence visualization in Document Mode
+- More teleology pattern families (e.g. fate, destiny, karma)
+- More fine-grained severity calibration
+- Firefox and Edge extension ports
+- Optional local-only mode for offline analysis
+
+---
+
+## 📄 License
+
+TBD – suggested: MIT or Apache-2.0.
