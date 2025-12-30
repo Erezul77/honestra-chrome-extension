@@ -23,14 +23,30 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-function showNotification(title, message) {
-  chrome.notifications.create({
+function showNotification(title, message, notificationId = null) {
+  const id = notificationId || "honestra-" + Date.now();
+  chrome.notifications.create(id, {
     type: "basic",
     iconUrl: "icons/icon48.png",
     title,
     message
   });
+  return id;
 }
+
+// Open popup window when notification is clicked
+chrome.notifications.onClicked.addListener((notificationId) => {
+  if (notificationId.startsWith("honestra-")) {
+    // Open the popup as a new window
+    chrome.windows.create({
+      url: "popup.html",
+      type: "popup",
+      width: 450,
+      height: 550
+    });
+    chrome.notifications.clear(notificationId);
+  }
+});
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== "honestra-analyze-selection") return;
@@ -71,16 +87,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }
       });
 
-      // Show notification with click hint
+      // Show notification - click to see full details
+      const notifId = "honestra-result-" + Date.now();
       if (!hasTeleology || severity === "none") {
         showNotification(
-          "Honestra Guard",
-          `✅ CLEAN – score ${(score * 100).toFixed(0)}%\nClick extension icon for details.`
+          "Honestra Guard ✅",
+          `CLEAN – score ${(score * 100).toFixed(0)}%\n\n👆 Click here for full details`,
+          notifId
         );
       } else {
         showNotification(
-          "Honestra Guard",
-          `⚠️ Teleology detected (${severity}) – score ${(score * 100).toFixed(0)}%\nClick extension icon for details.`
+          "Honestra Guard ⚠️",
+          `Teleology detected (${severity}) – score ${(score * 100).toFixed(0)}%\n\n👆 Click here for full details`,
+          notifId
         );
       }
     })
