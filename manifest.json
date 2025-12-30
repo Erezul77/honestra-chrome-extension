@@ -13,7 +13,8 @@
   "host_permissions": [
     "https://honestra.org/*",
     "https://www.honestra.org/*",
-    "http://localhost:3000/*"
+    "http://localhost:3000/*",
+    "file://*/*"
   ],
   "action": {
     "default_popup": "popup.html",
