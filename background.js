@@ -62,17 +62,25 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         typeof data.teleologyScore === "number" ? data.teleologyScore : 0;
       const severity = data.severity || "none";
 
+      // Save full result to storage so popup can display it
+      chrome.storage.local.set({
+        lastAnalysis: {
+          text,
+          result: data,
+          timestamp: Date.now()
+        }
+      });
+
+      // Show notification with click hint
       if (!hasTeleology || severity === "none") {
         showNotification(
           "Honestra Guard",
-          `✅ CLEAN – score ${(score * 100).toFixed(0)}%`
+          `✅ CLEAN – score ${(score * 100).toFixed(0)}%\nClick extension icon for details.`
         );
       } else {
         showNotification(
           "Honestra Guard",
-          `⚠️ Teleology detected (${severity}) – score ${(score * 100).toFixed(
-            0
-          )}%`
+          `⚠️ Teleology detected (${severity}) – score ${(score * 100).toFixed(0)}%\nClick extension icon for details.`
         );
       }
     })

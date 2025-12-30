@@ -1,1 +1,1 @@
-const HONESTRA_API_URL = "https://honestra.org/api/teleology";
+const HONESTRA_API_URL = "https://www.honestra.org/api/teleology";

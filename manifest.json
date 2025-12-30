@@ -7,10 +7,12 @@
     "activeTab",
     "scripting",
     "notifications",
-    "contextMenus"
+    "contextMenus",
+    "storage"
   ],
   "host_permissions": [
     "https://honestra.org/*",
+    "https://www.honestra.org/*",
     "http://localhost:3000/*"
   ],
   "action": {

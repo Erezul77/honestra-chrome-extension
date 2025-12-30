@@ -179,5 +179,29 @@
         analyze();
       }
     });
+
+    // Check for last analysis from context menu (stored by background.js)
+    chrome.storage.local.get(["lastAnalysis"], (result) => {
+      if (result.lastAnalysis) {
+        const { text, result: data, timestamp } = result.lastAnalysis;
+        const ageMs = Date.now() - timestamp;
+        
+        // Only show if less than 5 minutes old
+        if (ageMs < 5 * 60 * 1000) {
+          console.log("[Honestra Extension] Loading last analysis from context menu");
+          inputEl.value = text;
+          
+          // Check if we got document mode response
+          if (data && data.mode === "document" && data.summary) {
+            renderDocumentResult(data);
+          } else {
+            renderSingleTextResult(data);
+          }
+        }
+        
+        // Clear the stored analysis
+        chrome.storage.local.remove(["lastAnalysis"]);
+      }
+    });
   });
 })();
