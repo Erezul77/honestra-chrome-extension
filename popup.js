@@ -323,8 +323,10 @@
 
     const inputEl = document.getElementById("input");
     const analyzeBtn = document.getElementById("analyzeBtn");
+    const deepAnalysisBtn = document.getElementById("deepAnalysisBtn");
     const btnText = document.getElementById("btnText");
     const resultsContainer = document.getElementById("results-container");
+    const narrativeAlert = document.getElementById("narrative-alert");
     const statusBanner = document.getElementById("status-banner");
     const highlightedText = document.getElementById("highlighted-text");
     const highlightedSection = document.getElementById("highlighted-section");
@@ -335,6 +337,79 @@
     if (!inputEl || !analyzeBtn) {
       console.error("[Honestra Extension] Missing popup elements");
       return;
+    }
+
+    // Compute narrative score from detected patterns
+    function computeNarrativeScore(reasons) {
+      if (!reasons || reasons.length === 0) return { score: 0, label: "low", uniqueCategories: 0 };
+      
+      // Count unique categories
+      const categories = new Set(reasons.map(r => getPatternCategory(r)));
+      const uniqueCategories = categories.size;
+      
+      // High-weight patterns that suggest strong narrative teleology
+      const highWeightPatterns = [
+        "narrative_fallacy", "destiny_language", "agent_detection", 
+        "cosmic_purpose", "magical_thinking", "conspiracy", "victim_narrative"
+      ];
+      
+      const highWeightCount = reasons.filter(r => 
+        highWeightPatterns.some(p => r.includes(p))
+      ).length;
+      
+      // Calculate score (0-100)
+      let score = 0;
+      score += uniqueCategories * 15; // Each unique category adds 15
+      score += reasons.length * 8;     // Each pattern adds 8
+      score += highWeightCount * 12;   // High-weight patterns add extra 12
+      score = Math.min(score, 100);
+      
+      let label = "low";
+      if (score >= 60) label = "high";
+      else if (score >= 30) label = "medium";
+      
+      return { score, label, uniqueCategories };
+    }
+
+    function showNarrativeAlert(narrativeData) {
+      const { score, label, uniqueCategories } = narrativeData;
+      
+      if (score < 20) {
+        narrativeAlert.style.display = "none";
+        return;
+      }
+
+      const alertInfo = {
+        low: {
+          icon: "📊",
+          title: "Minor Patterns",
+          desc: "A few isolated teleological expressions detected."
+        },
+        medium: {
+          icon: "⚠️",
+          title: "Narrative Pattern Emerging",
+          desc: `${uniqueCategories} different types of teleological thinking detected. The text contains a moderate teleological narrative.`
+        },
+        high: {
+          icon: "🚨",
+          title: "Strong Teleological Narrative",
+          desc: `${uniqueCategories} different types of teleological thinking detected. This text has pervasive narrative framing that may distort reality.`
+        }
+      };
+
+      const info = alertInfo[label];
+      narrativeAlert.className = `narrative-alert ${label}`;
+      narrativeAlert.style.display = "flex";
+      narrativeAlert.innerHTML = `
+        <span class="narrative-alert-icon">${info.icon}</span>
+        <div class="narrative-alert-content">
+          <div class="narrative-alert-title">${info.title}</div>
+          <div class="narrative-alert-desc">${info.desc}</div>
+          <div class="narrative-meter">
+            <div class="narrative-meter-fill ${label}" style="width: ${score}%"></div>
+          </div>
+        </div>
+      `;
     }
 
     function showResults(data, originalText) {
@@ -422,6 +497,10 @@
       } else {
         suggestionsSection.style.display = "none";
       }
+
+      // Show narrative alert if applicable
+      const narrativeData = computeNarrativeScore(reasons);
+      showNarrativeAlert(narrativeData);
 
       resultsContainer.classList.add("show");
     }
@@ -539,6 +618,20 @@
 
       detailsSection.innerHTML = detailsHtml;
       suggestionsSection.style.display = "none";
+      
+      // Show narrative alert based on infiltration
+      const narrativeData = {
+        score: Math.round(s.infiltrationScore * 100),
+        label: s.infiltrationLabel,
+        uniqueCategories: new Set(
+          data.sentences
+            .filter(sent => sent.isTeleological)
+            .flatMap(sent => sent.guard.reasons || [])
+            .map(r => getPatternCategory(r))
+        ).size
+      };
+      showNarrativeAlert(narrativeData);
+      
       resultsContainer.classList.add("show");
     }
 
@@ -548,6 +641,65 @@
         analyze();
       }
     });
+
+    // Deep Analysis (AI-powered) - placeholder for now
+    async function deepAnalysis() {
+      const text = inputEl.value.trim();
+      if (!text) {
+        alert("Please enter text to analyze.");
+        return;
+      }
+
+      console.log("[Honestra Extension] Deep Analysis...");
+      deepAnalysisBtn.disabled = true;
+      deepAnalysisBtn.textContent = "🔄";
+
+      try {
+        // First, run regular document analysis
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, mode: "document" })
+        });
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        // Show document results with deep analysis context
+        showDocumentResults(data, text);
+        
+        // Add deep analysis note
+        const deepNote = document.createElement("div");
+        deepNote.className = "detail-item";
+        deepNote.innerHTML = `
+          <span class="detail-icon">🧠</span>
+          <div class="detail-content">
+            <div class="detail-label">AI Deep Analysis</div>
+            <div class="detail-explanation">
+              This analysis examines narrative patterns across the entire text. 
+              ${data.summary.infiltrationLabel === "high" 
+                ? "⚠️ This text appears to have a strong underlying teleological worldview that pervades the narrative."
+                : data.summary.infiltrationLabel === "medium"
+                ? "The text shows moderate teleological framing. Some passages may benefit from more neutral language."
+                : "The text is relatively free of teleological framing."
+              }
+            </div>
+          </div>
+        `;
+        detailsSection.appendChild(deepNote);
+
+      } catch (err) {
+        console.error("[Honestra Extension] Deep Analysis Error:", err);
+        alert("Could not perform deep analysis.");
+      } finally {
+        deepAnalysisBtn.disabled = false;
+        deepAnalysisBtn.textContent = "🔬 Deep";
+      }
+    }
+
+    if (deepAnalysisBtn) {
+      deepAnalysisBtn.addEventListener("click", deepAnalysis);
+    }
 
     // Check for last analysis from context menu
     chrome.storage.local.get(["lastAnalysis"], (result) => {

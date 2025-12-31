@@ -136,6 +136,103 @@
       box-shadow: none;
     }
 
+    .button-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .button-row .analyze-btn {
+      flex: 1;
+    }
+
+    .deep-btn {
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .deep-btn:hover {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .deep-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* Narrative Alert */
+    .narrative-alert {
+      margin: 12px 0;
+      padding: 12px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .narrative-alert.low {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+
+    .narrative-alert.medium {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      color: #92400e;
+    }
+
+    .narrative-alert.high {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    .narrative-alert-icon {
+      font-size: 1.5rem;
+    }
+
+    .narrative-alert-content {
+      flex: 1;
+    }
+
+    .narrative-alert-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .narrative-alert-desc {
+      font-size: 0.85rem;
+      margin-top: 4px;
+      opacity: 0.9;
+    }
+
+    .narrative-meter {
+      margin-top: 8px;
+      height: 8px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .narrative-meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .narrative-meter-fill.low { background: #22c55e; }
+    .narrative-meter-fill.medium { background: #f59e0b; }
+    .narrative-meter-fill.high { background: #ef4444; }
+
     /* Results Section */
     #results-container {
       display: none;
@@ -519,11 +616,18 @@ Examples of teleological language:
       ></textarea>
     </div>
 
-    <button id="analyzeBtn" class="analyze-btn">
-      <span id="btnText">🔍 Analyze Text</span>
-    </button>
+    <div class="button-row">
+      <button id="analyzeBtn" class="analyze-btn">
+        <span id="btnText">🔍 Analyze Text</span>
+      </button>
+      <button id="deepAnalysisBtn" class="deep-btn" title="AI-powered deep narrative analysis">
+        🔬 Deep
+      </button>
+    </div>
 
     <div id="results-container">
+      <div id="narrative-alert" class="narrative-alert" style="display: none;"></div>
+      
       <div class="result-card">
         <div id="status-banner" class="status-banner"></div>
         
