@@ -46,6 +46,36 @@
     ],
     agent: [
       "agent_detection"
+    ],
+    narrative: [
+      "narrative_fallacy"
+    ],
+    essentialism: [
+      "essentialism"
+    ],
+    victim: [
+      "victim_narrative"
+    ],
+    hindsight: [
+      "hindsight_bias"
+    ],
+    magical: [
+      "magical_thinking"
+    ],
+    signs: [
+      "signs_omens"
+    ],
+    purpose: [
+      "purpose_question"
+    ],
+    emotion: [
+      "emotion_personification"
+    ],
+    time: [
+      "time_teleology"
+    ],
+    destiny: [
+      "destiny_language"
     ]
   };
 
@@ -73,7 +103,17 @@
       pathetic: "🌧️",
       karma: "🔄",
       conspiracy: "🕵️",
-      agent: "👁️"
+      agent: "👁️",
+      narrative: "📖",
+      essentialism: "🔒",
+      victim: "😢",
+      hindsight: "🔮",
+      magical: "✨",
+      signs: "🪧",
+      purpose: "❓",
+      emotion: "💭",
+      time: "⏰",
+      destiny: "⭐"
     };
     return icons[category] || "⚠️";
   }
@@ -207,7 +247,18 @@
       "pathetic_fallacy": "Attributes human emotions to nature or weather",
       "karma": "Assumes cosmic justice or automatic moral consequences",
       "conspiracy": "Suggests coordinated hidden intent by vague 'they' or elites",
-      "agent_detection": "Sees intentional agency in random events (everything happens for a reason)"
+      "agent_detection": "Sees intentional agency in random events (everything happens for a reason)",
+      // Narrative fallacies
+      "narrative_fallacy": "Frames life as a story with a plot ('the story of my life', 'new chapter')",
+      "essentialism": "Belief in fixed identity that cannot change ('that's just who I am')",
+      "victim_narrative": "Pattern of persistent external blame ('they always do this to me')",
+      "hindsight_bias": "Illusion of knowing beforehand ('I knew it would happen')",
+      "magical_thinking": "Belief that thoughts influence reality ('law of attraction', 'manifesting')",
+      "signs_omens": "Seeing meaningful signs in random events ('it's a sign from the universe')",
+      "purpose_question": "Teleological 'why' questions ('why did this happen to me?')",
+      "emotion_personification": "Treating emotions as independent agents ('my fear tells me')",
+      "time_teleology": "Attributing agency to time ('time will heal', 'time will tell')",
+      "destiny_language": "Language of fate and calling ('destined to', 'it was written')"
     };
     
     const reasonLower = (reason || "").toLowerCase();
