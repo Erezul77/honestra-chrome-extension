@@ -22,6 +22,30 @@
     ],
     collective: [
       "collective_reification", "institutional_reification", "history_reification"
+    ],
+    justworld: [
+      "just_world"
+    ],
+    body: [
+      "body_teleology"
+    ],
+    tech: [
+      "tech_animism"
+    ],
+    divine: [
+      "divine_teleology"
+    ],
+    pathetic: [
+      "pathetic_fallacy"
+    ],
+    karma: [
+      "karma"
+    ],
+    conspiracy: [
+      "conspiracy"
+    ],
+    agent: [
+      "agent_detection"
     ]
   };
 
@@ -41,7 +65,15 @@
       anthropomorphic: "🤖",
       cosmic: "🌌",
       design: "🧬",
-      collective: "👥"
+      collective: "👥",
+      justworld: "⚖️",
+      body: "🫀",
+      tech: "💻",
+      divine: "✨",
+      pathetic: "🌧️",
+      karma: "🔄",
+      conspiracy: "🕵️",
+      agent: "👁️"
     };
     return icons[category] || "⚠️";
   }
@@ -162,11 +194,20 @@
       "purpose_driven": "Describes processes as having inherent purposes or goals",
       "fate": "Suggests events are predetermined or meant to happen",
       "natural_purpose": "Attributes purposeful design to natural processes",
-      // New reification categories
+      // Reification categories
       "collective_reification": "Attributes intentions, emotions, or agency to collectives (people, society, the public)",
       "institutional_reification": "Attributes intentions or emotions to institutions (market, government, law)",
       "nature_reification": "Attributes intentional design or choice to nature or evolution",
-      "history_reification": "Attributes agency or judgment to history or progress"
+      "history_reification": "Attributes agency or judgment to history or progress",
+      // New categories
+      "just_world": "Assumes the world inherently rewards good and punishes bad (Just World Fallacy)",
+      "body_teleology": "Attributes knowledge, wisdom, or intention to the body",
+      "tech_animism": "Attributes intention, emotion, or refusal to technology/devices",
+      "divine_teleology": "References divine plans, God's will, or spiritual purpose",
+      "pathetic_fallacy": "Attributes human emotions to nature or weather",
+      "karma": "Assumes cosmic justice or automatic moral consequences",
+      "conspiracy": "Suggests coordinated hidden intent by vague 'they' or elites",
+      "agent_detection": "Sees intentional agency in random events (everything happens for a reason)"
     };
     
     const reasonLower = (reason || "").toLowerCase();
@@ -189,7 +230,7 @@
       info: { 
         icon: "🔵", 
         title: "Info", 
-        subtitle: "Minor teleological patterns found",
+        subtitle: "Minor teleological patterns (common figures of speech)",
         class: "info"
       },
       warn: { 
@@ -208,6 +249,12 @@
         icon: "🔴", 
         title: "High Alert", 
         subtitle: "Strong teleological framing present",
+        class: "high"
+      },
+      block: { 
+        icon: "🚨", 
+        title: "Critical", 
+        subtitle: "Potentially harmful conspiracy/misinformation patterns",
         class: "high"
       },
       critical: { 
@@ -280,14 +327,10 @@
         detailsHtml += `<div class="section-title">🎯 Detected Patterns</div>`;
         reasons.forEach(reason => {
           const category = getPatternCategory(reason);
-          const categoryIcons = {
-            anthropomorphic: "🤖",
-            cosmic: "🌌",
-            design: "🧬"
-          };
+          const icon = getCategoryIcon(category);
           detailsHtml += `
             <div class="detail-item">
-              <span class="detail-icon">${categoryIcons[category] || "⚠️"}</span>
+              <span class="detail-icon">${icon}</span>
               <div class="detail-content">
                 <div class="detail-label">${formatReasonLabel(reason)}</div>
                 <div class="detail-explanation">${getReasonExplanation(reason)}</div>
