@@ -106,25 +106,13 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }
       });
 
-      // Show notification - click to see full details
-      const notifId = "honestra-result-" + Date.now();
-      const reasonsList = data.reasons && data.reasons.length > 0 
-        ? data.reasons.slice(0, 3).join(", ") 
-        : "";
-      
-      if (!hasTeleology || severity === "none") {
-        showNotification(
-          "✅ CLEAN",
-          `No teleology detected (${(score * 100).toFixed(0)}%)\n\n👆 Click for details`,
-          notifId
-        );
-      } else {
-        showNotification(
-          `⚠️ ${severity.toUpperCase()}: Teleology Detected`,
-          `${reasonsList}\nScore: ${(score * 100).toFixed(0)}%\n\n👆 Click for details`,
-          notifId
-        );
-      }
+      // Open popup window automatically with results
+      chrome.windows.create({
+        url: "popup.html",
+        type: "popup",
+        width: 460,
+        height: 600
+      });
     })
     .catch((err) => {
       console.error("[Honestra Extension] BG ERROR:", err);
