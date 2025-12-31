@@ -9,8 +9,8 @@
   // Pattern categories for highlighting
   const PATTERN_CATEGORIES = {
     anthropomorphic: [
-      "anthropomorphic_model", "anthropomorphic", "model_wants", "model_tries",
-      "ai_intention", "model_intention", "system_wants"
+      "anthropomorphic_model", "anthropomorphic", "anthropomorphic_self",
+      "model_wants", "model_tries", "ai_intention", "model_intention", "system_wants"
     ],
     cosmic: [
       "cosmic_purpose", "cosmic", "universe_purpose", "fate", "destiny",
@@ -18,7 +18,10 @@
     ],
     design: [
       "design_language", "nature_design", "natural_purpose", "evolved_to",
-      "designed_for", "purpose_driven"
+      "designed_for", "purpose_driven", "nature_reification"
+    ],
+    collective: [
+      "collective_reification", "institutional_reification", "history_reification"
     ]
   };
 
@@ -31,6 +34,16 @@
     }
     // Default to anthropomorphic for unknown patterns
     return "anthropomorphic";
+  }
+
+  function getCategoryIcon(category) {
+    const icons = {
+      anthropomorphic: "🤖",
+      cosmic: "🌌",
+      design: "🧬",
+      collective: "👥"
+    };
+    return icons[category] || "⚠️";
   }
 
   function escapeHtml(text) {
@@ -140,6 +153,7 @@
   function getReasonExplanation(reason) {
     const explanations = {
       "anthropomorphic_model": "The AI/model is described as having human-like intentions or desires",
+      "anthropomorphic_self": "The AI speaks of itself as having feelings, desires, or preferences",
       "anthropomorphic": "Non-human entities described with human characteristics or intentions",
       "cosmic_purpose": "Suggests the universe or cosmos has intentional goals or plans",
       "design_language": "Uses language implying intentional design by nature or evolution",
@@ -147,7 +161,12 @@
       "model_tries": "Attributes 'trying' or 'attempting' to an AI system",
       "purpose_driven": "Describes processes as having inherent purposes or goals",
       "fate": "Suggests events are predetermined or meant to happen",
-      "natural_purpose": "Attributes purposeful design to natural processes"
+      "natural_purpose": "Attributes purposeful design to natural processes",
+      // New reification categories
+      "collective_reification": "Attributes intentions, emotions, or agency to collectives (people, society, the public)",
+      "institutional_reification": "Attributes intentions or emotions to institutions (market, government, law)",
+      "nature_reification": "Attributes intentional design or choice to nature or evolution",
+      "history_reification": "Attributes agency or judgment to history or progress"
     };
     
     const reasonLower = (reason || "").toLowerCase();
