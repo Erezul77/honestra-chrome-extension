@@ -12,16 +12,35 @@ try {
 const API_URL =
   typeof HONESTRA_API_URL === "string" && HONESTRA_API_URL.length > 0
     ? HONESTRA_API_URL
-    : "https://honestra.org/api/teleology";
+    : "https://www.honestra.org/api/teleology";
 
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("[Honestra Extension] onInstalled, creating context menu");
-  chrome.contextMenus.create({
-    id: "honestra-analyze-selection",
-    title: "Analyze with Honestra Guard",
-    contexts: ["selection"]
+// Create context menu - runs on install AND when service worker wakes up
+function createContextMenu() {
+  // Remove existing to avoid duplicates
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: "honestra-analyze-selection",
+      title: "🔍 Analyze with Honestra Guard",
+      contexts: ["selection"]
+    });
+    console.log("[Honestra Extension] Context menu created");
   });
+}
+
+// Create on install
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("[Honestra Extension] onInstalled");
+  createContextMenu();
 });
+
+// Also create on startup (when browser starts or extension is reloaded)
+chrome.runtime.onStartup.addListener(() => {
+  console.log("[Honestra Extension] onStartup");
+  createContextMenu();
+});
+
+// Ensure menu exists when service worker wakes
+createContextMenu();
 
 function showNotification(title, message, notificationId = null) {
   const id = notificationId || "honestra-" + Date.now();
@@ -89,16 +108,20 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
       // Show notification - click to see full details
       const notifId = "honestra-result-" + Date.now();
+      const reasonsList = data.reasons && data.reasons.length > 0 
+        ? data.reasons.slice(0, 3).join(", ") 
+        : "";
+      
       if (!hasTeleology || severity === "none") {
         showNotification(
-          "Honestra Guard ✅",
-          `CLEAN – score ${(score * 100).toFixed(0)}%\n\n👆 Click here for full details`,
+          "✅ CLEAN",
+          `No teleology detected (${(score * 100).toFixed(0)}%)\n\n👆 Click for details`,
           notifId
         );
       } else {
         showNotification(
-          "Honestra Guard ⚠️",
-          `Teleology detected (${severity}) – score ${(score * 100).toFixed(0)}%\n\n👆 Click here for full details`,
+          `⚠️ ${severity.toUpperCase()}: Teleology Detected`,
+          `${reasonsList}\nScore: ${(score * 100).toFixed(0)}%\n\n👆 Click for details`,
           notifId
         );
       }
